@@ -1,0 +1,177 @@
+Write a menu driven program to maintain student information. Modify Student class 
+created in previous assignment. Add a member gpa in student class, add a function in 
+student class to return GPA of a student
+ calculateGPA()
+ gpa=(1/3)*m1+(1/2)*m2+(1/4)*m3
+Create an array to store Multiple students.
+1. Display All Student
+2. Search by id
+3. Search by name
+4. calculate GPA of a student
+5. Exit
+
+
+import java.util.Scanner;
+
+class Student {
+    private int studid;
+    private String name;
+    private int m1;
+    private int m2;
+    private int m3;
+    private double gpa;
+
+    public Student(int studid, String name, int m1, int m2, int m3) {
+        this.studid = studid;
+        this.name = name;
+        this.m1 = m1;
+        this.m2 = m2;
+        this.m3 = m3;
+        this.gpa = calculateGPA();
+    }
+
+    public int getStudid() {
+        return studid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public int getM1() {
+        return m1;
+    }
+
+    public int getM2() {
+        return m2;
+    }
+
+    public int getM3() {
+        return m3;
+    }
+
+    public double getGPA() {
+        return gpa;
+    }
+
+    private double calculateGPA() {
+        return (1.0/3)*m1 + (1.0/2)*m2 + (1.0/4)*m3;
+    }
+}
+
+public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+    private static Student[] students = new Student[10];
+    private static int numStudents = 0;
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("Menu:");
+            System.out.println("1. Display All Students");
+            System.out.println("2. Search by ID");
+            System.out.println("3. Search by Name");
+            System.out.println("4. Calculate GPA of a Student");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left over from nextInt()
+
+            switch (choice) {
+                case 1:
+                    displayAllStudents();
+                    break;
+                case 2:
+                    searchById();
+                    break;
+                case 3:
+                    searchByName();
+                    break;
+                case 4:
+                    calculateGPA();
+                    break;
+                case 5:
+                    System.out.println("Exiting program...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+            System.out.println();
+        } while (choice != 5);
+    }
+
+    private static void displayAllStudents() {
+        if (numStudents == 0) {
+            System.out.println("No students found.");
+            return;
+        }
+        System.out.println("All Students:");
+        System.out.println("_____________");
+        for (int i = 0; i < numStudents; i++) {
+            displayStudent(students[i]);
+        }
+    }
+
+    private static void searchById() {
+        System.out.print("Enter student ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left over from nextInt()
+        Student student = findStudentById(id);
+        if (student == null) {
+            System.out.println("Student not found.");
+        } else {
+            displayStudent(student);
+        }
+    }
+
+    private static void searchByName() {
+        System.out.print("Enter student name: ");
+        String name = scanner.nextLine();
+        Student student = findStudentByName(name);
+        if (student == null) {
+            System.out.println("Student not found.");
+        } else {
+            displayStudent(student);
+        }
+    }
+
+    private static void calculateGPA() {
+        System.out.print("Enter student ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left over from nextInt()
+        Student student = findStudentById(id);
+        if (student == null) {
+            System.out.println("Student not found.");
+        } else {
+            System.out.printf("GPA of student %d (%s) is %.2f%n", student.getStudid(), student.getName(), student.getGPA());
+        }
+    }
+
+    private static void displayStudent(Student student) {
+        System.out.printf("Student ID: %d%n", student.getStudid());
+        System.out.printf("Name: %s%n", student.getName());
+        System.out.printf("M1: %d%n", student.getM1());
+        System.out.printf("M2: %d%n", student.getM2());
+        System.out.printf("M3: %d%n", student.getM3());
+        System.out.printf("GPA: %.2f%n", student.getGPA());
+        System.out.println();
+    }
+
+    private static Student findStudentById(int id) {
+        for (int i = 0; i < numStudents; i++) {
+            if (students[i].getStudid() == id) {
+                return students[i];
+            }
+        }
+        return null;
+    }
+
+    private static Student findStudentByName(String name) {
+        for (int i = 0; i < numStudents; i++) {
+            if (students[i].getName().equals(name)) {
+                return students[i];
+            }
+        }
+        return null;
+    }
+}

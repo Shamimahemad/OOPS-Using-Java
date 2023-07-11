@@ -1,0 +1,226 @@
+Write a program to store information about IPL teams in ArrayList
+Create Team class to store teamid, tname, coachname, and list of players.
+and perform following operations
+1. add new Team
+2. delete a team
+3. delete a player from team(accept player id to delete)
+4. display all batsman
+5. display all player with a speciality(accept speciality from user)
+6. add a new player in a team
+7. modify coach of a team
+8. exit
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Player {
+    private int playerId;
+    private String playerName;
+    private String playerSpeciality;
+
+    public Player(int playerId, String playerName, String playerSpeciality) {
+        this.playerId = playerId;
+        this.playerName = playerName;
+        this.playerSpeciality = playerSpeciality;
+    }
+
+    public int getPlayerId() {
+        return playerId;
+    }
+
+    public String getPlayerName() {
+        return playerName;
+    }
+
+    public String getPlayerSpeciality() {
+        return playerSpeciality;
+    }
+}
+
+class Team {
+    private int teamId;
+    private String teamName;
+    private String coachName;
+    private ArrayList<Player> players;
+
+    public Team(int teamId, String teamName, String coachName, ArrayList<Player> players) {
+        this.teamId = teamId;
+        this.teamName = teamName;
+        this.coachName = coachName;
+        this.players = players;
+    }
+
+    public int getTeamId() {
+        return teamId;
+    }
+
+    public String getTeamName() {
+        return teamName;
+    }
+
+    public String getCoachName() {
+        return coachName;
+    }
+
+    public ArrayList<Player> getPlayers() {
+        return players;
+    }
+
+    public void setCoachName(String coachName) {
+        this.coachName = coachName;
+    }
+
+    public void addPlayer(Player player) {
+        players.add(player);
+    }
+
+    public void removePlayer(int playerId) {
+        for (Player player : players) {
+            if (player.getPlayerId() == playerId) {
+                players.remove(player);
+                break;
+            }
+        }
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        ArrayList<Team> teams = new ArrayList<>();
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("1. Add new team");
+            System.out.println("2. Delete a team");
+            System.out.println("3. Delete a player from team");
+            System.out.println("4. Display all batsman");
+            System.out.println("5. Display all player with a speciality");
+            System.out.println("6. Add a new player in a team");
+            System.out.println("7. Modify coach of a team");
+            System.out.println("8. Exit");
+            System.out.print("Enter your choice: ");
+            int choice = scanner.nextInt();
+
+            switch (choice) {
+                case 1:
+                    System.out.print("Enter team id: ");
+                    int teamId = scanner.nextInt();
+                    System.out.print("Enter team name: ");
+                    String teamName = scanner.next();
+                    System.out.print("Enter coach name: ");
+                    String coachName = scanner.next();
+                    teams.add(new Team(teamId, teamName, coachName, new ArrayList<Player>()));
+                    System.out.println("Team added successfully.");
+                    break;
+                case 2:
+                    System.out.print("Enter team id to delete: ");
+                    int teamIdToDelete = scanner.nextInt();
+                    boolean teamDeleted = false;
+                    for (Team team : teams) {
+                        if (team.getTeamId() == teamIdToDelete) {
+                            teams.remove(team);
+                            teamDeleted = true;
+                            break;
+                        }
+                    }
+                    if (teamDeleted) {
+                        System.out.println("Team deleted successfully.");
+                    } else {
+                        System.out.println("Team not found.");
+                    }
+                    break;
+                case 3:
+                    System.out.print("Enter team id: ");
+                    int teamIdToRemovePlayer = scanner.nextInt();
+                    System.out.print("Enter player id to remove: ");
+                    int playerIdToRemove = scanner.nextInt();
+                    boolean playerRemoved = false;
+                    for (Team team : teams) {
+                        if (team.getTeamId() == teamIdToRemovePlayer) {
+                            team.removePlayer(playerIdToRemove);
+                            playerRemoved = true;
+                            break;
+                        }
+                    }
+                    if (playerRemoved) {
+                        System.out.println("Player removed successfully.");
+                    } else {
+                        System.out.println("Team not found or player not found.");
+                    }
+                    break;
+                case 4:
+                    System.out.println("Batsmen:");
+                    for (Team team : teams) {
+                        for (Player player : team.getPlayers()) {
+                            if (player.getPlayerSpeciality().equalsIgnoreCase("batsman")) {
+                                System.out.println(player.getPlayerName());
+                            }
+                        }
+                    }
+                    break;
+                case 5:
+                    System.out.print("Enter speciality to search: ");
+                    String specialityToSearch = scanner.next();
+                    System.out.println("Players with speciality " + specialityToSearch + ":");
+                    for (Team team : teams) {
+                        for (Player player : team.getPlayers()) {
+                            if (player.getPlayerSpeciality().equalsIgnoreCase(specialityToSearch)) {
+                                System.out.println(player.getPlayerName());
+                            }
+                        }
+                    }
+                    break;
+                case 6:
+                    System.out.print("Enter team id: ");
+                    int teamIdToAddPlayer = scanner.nextInt();
+                    System.out.print("Enter player id: ");
+                    int playerIdToAdd = scanner.nextInt();
+                    System.out.print("Enter player name: ");
+                    String playerNameToAdd = scanner.next();
+                    System.out.print("Enter player speciality: ");
+                    String playerSpecialityToAdd = scanner.next();
+                    boolean teamFound = false;
+                    for (Team team : teams) {
+                        if (team.getTeamId() == teamIdToAddPlayer) {
+                            team.addPlayer(new Player(playerIdToAdd, playerNameToAdd, playerSpecialityToAdd));
+                            teamFound = true;
+                            break;
+                        }
+                    }
+                    if (teamFound) {
+                        System.out.println("Player added successfully.");
+                    } else {
+                        System.out.println("Team not found.");
+                    }
+                    break;
+                case 7:
+                    System.out.print("Enter team id: ");
+                    int teamIdToModifyCoach = scanner.nextInt();
+                    System.out.print("Enter new coach name: ");
+                    String newCoachName = scanner.next();
+                    boolean coachModified = false;
+                    for (Team team : teams) {
+                        if (team.getTeamId() == teamIdToModifyCoach) {
+                            team.setCoachName(newCoachName);
+                            coachModified = true;
+                            break;
+                        }
+                    }
+                    if (coachModified) {
+                        System.out.println("Coach modified successfully.");
+                    } else {
+                        System.out.println("Team not found.");
+                    }
+                    break;
+                case 8:
+                    System.out.println("Exiting program...");
+                    scanner.close();
+                    System.exit(0);
+                default:
+                    System.out.println("Invalid choice.");
+                    break;
+            }
+        }
+    }
+}

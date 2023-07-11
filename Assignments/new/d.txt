@@ -1,0 +1,709 @@
+[21:53, 7/9/2023] Swapnil Kakade: Imagine a publishing company that markets both books and video-cassettes versions of its work. Write a console-based application to manage the company's repository of books and tapes. The application should allow the company owner to perform following tasks:
+
+1. Publish new book
+
+2. Publish new tape 3. List all book publications ordered by publish date in descending order
+
+4. List top 5 publications of current year based on rating
+
+5. Remove all publications which are 5 years old
+
+You can create a class Publication that stores
+
+⚫id (Unique identifier, should be generated automatically)
+
+title (text),
+
+price (in INR),
+
+⚫ publish date,
+
+ratings (integer value between 1 to 10)
+
+You can have two sub classes - Book and Tape
+
+Book will store page count
+
+Tape will store playing time (in minutes)
+
+Note: Two publications cannot have same titles. You can use java collection to store items in memory. Storing dat in relational database in not expected.
+[21:56, 7/9/2023] Swapnil Kakade: import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Scanner;
+
+public class PublicationManager {
+    private static Map<String, Publication> publications = new HashMap<>();
+    private static int idCounter = 1;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+        do {
+            System.out.println("Please select an option:");
+            System.out.println("1. Publish new book");
+            System.out.println("2. Publish new tape");
+            System.out.println("3. List all book publications ordered by publish date in descending order");
+            System.out.println("4. List top 5 publications of current year based on rating");
+            System.out.println("5. Remove all publications which are 5 years old");
+            System.out.println("6. Exit");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    publishNewBook(scanner);
+                    break;
+                case 2:
+                    publishNewTape(scanner);
+                    break;
+                case 3:
+                    listAllBooksByPublishDate();
+                    break;
+                case 4:
+                    listTop5PublicationsByRating();
+                    break;
+                case 5:
+                    removePublicationsOlderThan5Years();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 6);
+    }
+
+    private static void publishNewBook(Scanner scanner) {
+        System.out.println("Please enter the book title:");
+        String title = scanner.nextLine();
+        if (publications.containsKey(title)) {
+            System.out.println("A publication with the same title already exists.");
+            return;
+        }
+        System.out.println("Please enter the book price (in INR):");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.println("Please enter the book publish date (in yyyy-mm-dd format):");
+        String publishDateStr = scanner.nextLine();
+        Date publishDate = Publication.parseDate(publishDateStr);
+        if (publishDate == null) {
+            System.out.println("Invalid date format. Please try again.");
+            return;
+        }
+        System.out.println("Please enter the book page count:");
+        int pageCount = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the book rating (between 1 to 10):");
+        int rating = scanner.nextInt();
+        scanner.nextLine();
+        Book book = new Book(idCounter++, title, price, publishDate, rating, pageCount);
+        publications.put(title, book);
+        System.out.println("Book published successfully.");
+    }
+
+    private static void publishNewTape(Scanner scanner) {
+        System.out.println("Please enter the tape title:");
+        String title = scanner.nextLine();
+        if (publications.containsKey(title)) {
+            System.out.println("A publication with the same title already exists.");
+            return;
+        }
+        System.out.println("Please enter the tape price (in INR):");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        System.out.println("Please enter the tape publish date (in yyyy-mm-dd format):");
+        String publishDateStr = scanner.nextLine();
+        Date publishDate = Publication.parseDate(publishDateStr);
+        if (publishDate == null) {
+            System.out.println("Invalid date format. Please try again.");
+            return;
+        }
+        System.out.println("Please enter the tape playing time (in minutes):");
+        int playingTime = scanner.nextInt();
+        scanner.nextLine();
+        System.out.println("Please enter the tape rating (between 1 to 10):");
+        int rating = scanner.nextInt();
+        scanner.nextLine();
+        Tape tape = new Tape(idCounter++, title, price, publishDate, rating, playingTime);
+        publications.put(title, tape);
+        System.out.println("Tape published successfully.");
+    }
+
+    private static void listAllBooksByPublishDate() {
+        List<Book> books = new ArrayList<>();
+        for (Publication publication : publications.values()) {
+            if (publication instanceof Book) {
+                books.add((Book) publication);
+            }
+        }
+        Collections.sort(books, new Comparator<Book>() {
+            @Override
+            public int compare(Book b1, Book b2) {
+                return b2.getPublishDate().compareTo(b1.getPublishDate());
+            }
+        });
+        System.out.println("List of all book publications ordered by publish date in descending order:");
+        for (Book book : books) {
+            System.out.println(book);
+        }
+    }
+
+    private static void listTop5PublicationsByRating() {
+        List<Publication> publicationsList = new ArrayList<>(publications.values());
+        Collections.sort(publicationsList, new Comparator<Publication>() {
+            @Override
+            public int compare(Publication p1, Publication p2) {
+                return p2.getRating() - p1.getRating();
+            }
+        });
+        int count = 0;
+        System.out.println("List of top 5 publications of current year based on rating:");
+        for (Publication publication : publicationsList) {
+            if (count >= 5) {
+                break;
+            }
+            if (publication.getPublishDate().getYear() == new Date().getYear()) {
+                System.out.println(publication);
+                count++;
+            }
+        }
+    }
+
+    private static void removePublicationsOlderThan5Years() {
+        List<String> titlesToRemove = new ArrayList<>();
+        for (Map.Entry<String, Publication> entry : publications.entrySet()) {
+            if (entry.getValue().getPublishDate().getYear() < new Date().getYear() - 5) {
+                titlesToRemove.add(entry.getKey());
+            }
+        }
+        for (String title : titlesToRemove) {
+            publications.remove(title);
+        }
+        System.out.println("Publications older than 5 years removed successfully.");
+    }
+}
+
+class Publication {
+    private int id;
+    private String title;
+    private double price;
+    private Date publishDate;
+    private int rating;
+
+    public Publication(int id, String title, double price, Date publishDate, int rating) {
+        this.id = id;
+        this.title = title;
+        this.price = price;
+        this.publishDate = publishDate;
+        this.rating = rating;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getTitle() {
+        return title;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public Date getPublishDate() {
+        return publishDate;
+    }
+
+    public int getRating() {
+        return rating;
+    }
+
+    public static Date parseDate(String dateStr) {
+        try {
+            return new Date(dateStr);
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    @Override
+    public String toString() {
+        return "Publication{" +
+                "id=" + id +
+                ", title='" + title + '\'' +
+                ", price=" + price +
+                ", publishDate=" + publishDate +
+                ", rating=" + rating +
+                '}';
+    }
+}
+[21:57, 7/9/2023] Swapnil Kakade: Q1: Write a console-based menu driven java program for a fashion e-commerce company where site a can perform following tasks:
+
+140 Marks)
+
+1. Add new Cloth 2. Update stock of a Cloth
+
+3. Display Clothes having size S
+
+[5 Marks] 15 Marks]
+
+[5 Marks]
+
+4. Display Clothes which are out of stock
+
+[5 Marks]
+
+5. Remove clothes which are out of stock for last 3 months
+
+[5 Marks]
+
+You can define a class Cloth with following fields -
+
+a. ID (unique identifier for each cloth, should be generated automatically)
+
+b. Listing Date (day on which cloth is added to site for sale)
+
+c. Stock Update Date (it changed every time when admin update stock or user's order executed)
+
+d. Stock (Available quantity)
+
+e. Size (Should be Enum, Example: S, M, L, XL etc.)
+
+f. Price (in INR)
+[21:59, 7/9/2023] Swapnil Kakade: import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+public class FashionEcommerce {
+    private static List<Cloth> clothes = new ArrayList<>();
+    private static int idCounter = 1;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+        do {
+            System.out.println("Please select an option:");
+            System.out.println("1. Add new Cloth");
+            System.out.println("2. Update stock of a Cloth");
+            System.out.println("3. Display Clothes having size S");
+            System.out.println("4. Display Clothes which are out of stock");
+            System.out.println("5. Remove clothes which are out of stock for last 3 months");
+            System.out.println("6. Exit");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    addNewCloth(scanner);
+                    break;
+                case 2:
+                    updateClothStock(scanner);
+                    break;
+                case 3:
+                    displayClothesBySize(scanner);
+                    break;
+                case 4:
+                    displayOutOfStockClothes();
+                    break;
+                case 5:
+                    removeOutOfStockClothesForLast3Months();
+                    break;
+                case 6:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 6);
+    }
+
+    private static void addNewCloth(Scanner scanner) {
+        System.out.println("Please enter the cloth size (S, M, L, XL, etc.):");
+        String sizeStr = scanner.nextLine();
+        Cloth.Size size = Cloth.Size.valueOf(sizeStr.toUpperCase());
+        System.out.println("Please enter the cloth price (in INR):");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        Cloth cloth = new Cloth(idCounter++, new Date(), new Date(), 0, size, price);
+        clothes.add(cloth);
+        System.out.println("Cloth added successfully.");
+    }
+
+    private static void updateClothStock(Scanner scanner) {
+        System.out.println("Please enter the cloth ID:");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        Cloth cloth = findClothById(id);
+        if (cloth == null) {
+            System.out.println("Cloth not found.");
+            return;
+        }
+        System.out.println("Please enter the new stock quantity:");
+        int stock = scanner.nextInt();
+        scanner.nextLine();
+        cloth.setStock(stock);
+        cloth.setStockUpdateDate(new Date());
+        System.out.println("Stock updated successfully.");
+    }
+
+    private static void displayClothesBySize(Scanner scanner) {
+        System.out.println("Please enter the cloth size (S, M, L, XL, etc.):");
+        String sizeStr = scanner.nextLine();
+        Cloth.Size size = Cloth.Size.valueOf(sizeStr.toUpperCase());
+        System.out.println("Clothes having size " + size + ":");
+        for (Cloth cloth : clothes) {
+            if (cloth.getSize() == size) {
+                System.out.println(cloth);
+            }
+        }
+    }
+
+    private static void displayOutOfStockClothes() {
+        System.out.println("Clothes which are out of stock:");
+        for (Cloth cloth : clothes) {
+            if (cloth.getStock() == 0) {
+                System.out.println(cloth);
+            }
+        }
+    }
+
+    private static void removeOutOfStockClothesForLast3Months() {
+        List<Cloth> clothesToRemove = new ArrayList<>();
+        for (Cloth cloth : clothes) {
+            if (cloth.getStock() == 0 && isClothOlderThan3Months(cloth)) {
+                clothesToRemove.add(cloth);
+            }
+        }
+        clothes.removeAll(clothesToRemove);
+        System.out.println("Clothes which are out of stock for last 3 months removed successfully.");
+    }
+
+    private static Cloth findClothById(int id) {
+        for (Cloth cloth : clothes) {
+            if (cloth.getId() == id) {
+                return cloth;
+            }
+        }
+        return null;
+    }
+
+    private static boolean isClothOlderThan3Months(Cloth cloth) {
+        long diffInMs = new Date().getTime() - cloth.getStockUpdateDate().getTime();
+        long diffInDays = diffInMs / (24 * 60 * 60 * 1000);
+        return diffInDays >= 90;
+    }
+}
+
+class Cloth {
+    private int id;
+    private Date listingDate;
+    private Date stockUpdateDate;
+    private int stock;
+    private Size size;
+    private double price;
+
+    public Cloth(int id, Date listingDate, Date stockUpdateDate, int stock, Size size, double price) {
+        this.id = id;
+        this.listingDate = listingDate;
+        this.stockUpdateDate = stockUpdateDate;
+        this.stock = stock;
+        this.size = size;
+        this.price = price;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public Date getListingDate() {
+        return listingDate;
+    }
+
+    public Date getStockUpdateDate() {
+        return stockUpdateDate;
+    }
+
+    public void setStockUpdateDate(Date stockUpdateDate) {
+        this.stockUpdateDate = stockUpdateDate;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public Size getSize() {
+        return size;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    @Override
+    public String toString() {
+        return "Cloth{" +
+                "id=" + id +
+                ", listingDate=" + listingDate +
+                ", stockUpdateDate=" + stockUpdateDate +
+                ", stock=" + stock +
+                ", size=" + size +
+                ", price=" + price +
+                '}';
+    }
+
+    public enum Size {
+        S, M, L, XL
+    }
+}
+[22:00, 7/9/2023] Swapnil Kakade: A company StyleWithPen sells stylish Pens online.
+
+Company needs an interface for site admin to manage stocks.
+
+Write a console-based menu driven java program for site ADMIN to perform following operations:
+
+1. Add new Pen.
+
+2. Update stock of a Pen.
+
+3.Set discount of 20% for all the pens which are not at all sold in last 3 months.
+
+4. Remove Pens which are never sold once listed in 9 months.
+
+You can define a class Pen with the following fields-
+
+a. ID (unique identifier for each Pen, should be generated automatically)
+
+b. Brand (Example: Cello, Parker, Reynolds etc.) c. Color
+
+d. InkColor
+
+e. Material (Example: Plastic, Alloy Steel, Metal etc.)
+
+f. Stock (Available quantity)
+
+8. Stock Update Date (it changed every time when admin update stock or user order executed) h. Stock Listing Date (date on which product is added to site for sale)
+
+1. Price (in INR)
+
+J. Discounts (in percentage)
+
+Note: You can use java collection to store items in memory. Storing data in relational database in not expected.
+[22:01, 7/9/2023] Swapnil Kakade: import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.Scanner;
+
+public class PenStockManager {
+    private static List<Pen> pens = new ArrayList<>();
+    private static int idCounter = 1;
+
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+        int choice = 0;
+        do {
+            System.out.println("Please select an option:");
+            System.out.println("1. Add new Pen");
+            System.out.println("2. Update stock of a Pen");
+            System.out.println("3. Set discount of 20% for all the pens which are not at all sold in last 3 months");
+            System.out.println("4. Remove Pens which are never sold once listed in 9 months");
+            System.out.println("5. Exit");
+            choice = scanner.nextInt();
+            scanner.nextLine();
+            switch (choice) {
+                case 1:
+                    addNewPen(scanner);
+                    break;
+                case 2:
+                    updatePenStock(scanner);
+                    break;
+                case 3:
+                    setDiscountForUnsoldPens();
+                    break;
+                case 4:
+                    removeUnsoldPensFor9Months();
+                    break;
+                case 5:
+                    System.out.println("Exiting...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+        } while (choice != 5);
+    }
+
+    private static void addNewPen(Scanner scanner) {
+        System.out.println("Please enter the pen brand:");
+        String brand = scanner.nextLine();
+        System.out.println("Please enter the pen color:");
+        String color = scanner.nextLine();
+        System.out.println("Please enter the pen ink color:");
+        String inkColor = scanner.nextLine();
+        System.out.println("Please enter the pen material:");
+        String material = scanner.nextLine();
+        System.out.println("Please enter the pen price (in INR):");
+        double price = scanner.nextDouble();
+        scanner.nextLine();
+        Pen pen = new Pen(idCounter++, brand, color, inkColor, material, 0, new Date(), new Date(), price, 0);
+        pens.add(pen);
+        System.out.println("Pen added successfully.");
+    }
+
+    private static void updatePenStock(Scanner scanner) {
+        System.out.println("Please enter the pen ID:");
+        int id = scanner.nextInt();
+        scanner.nextLine();
+        Pen pen = findPenById(id);
+        if (pen == null) {
+            System.out.println("Pen not found.");
+            return;
+        }
+        System.out.println("Please enter the new stock quantity:");
+        int stock = scanner.nextInt();
+        scanner.nextLine();
+        pen.setStock(stock);
+        pen.setStockUpdateDate(new Date());
+        System.out.println("Stock updated successfully.");
+    }
+
+    private static void setDiscountForUnsoldPens() {
+        for (Pen pen : pens) {
+            if (pen.getStock() > 0) {
+                continue;
+            }
+            long diffInMs = new Date().getTime() - pen.getStockListingDate().getTime();
+            long diffInDays = diffInMs / (24 * 60 * 60 * 1000);
+            if (diffInDays >= 90) {
+                pen.setDiscount(20);
+            }
+        }
+        System.out.println("Discount set for unsold pens successfully.");
+    }
+
+    private static void removeUnsoldPensFor9Months() {
+        List<Pen> pensToRemove = new ArrayList<>();
+        for (Pen pen : pens) {
+            if (pen.getStock() > 0) {
+                continue;
+            }
+            long diffInMs = new Date().getTime() - pen.getStockListingDate().getTime();
+            long diffInDays = diffInMs / (24 * 60 * 60 * 1000);
+            if (diffInDays >= 270) {
+                pensToRemove.add(pen);
+            }
+        }
+        pens.removeAll(pensToRemove);
+        System.out.println("Pens which are never sold once listed in 9 months removed successfully.");
+    }
+
+    private static Pen findPenById(int id) {
+        for (Pen pen : pens) {
+            if (pen.getId() == id) {
+                return pen;
+            }
+        }
+        return null;
+    }
+}
+
+class Pen {
+    private int id;
+    private String brand;
+    private String color;
+    private String inkColor;
+    private String material;
+    private int stock;
+    private Date stockUpdateDate;
+    private Date stockListingDate;
+    private double price;
+    private int discount;
+
+    public Pen(int id, String brand, String color, String inkColor, String material, int stock, Date stockUpdateDate, Date stockListingDate, double price, int discount) {
+        this.id = id;
+        this.brand = brand;
+        this.color = color;
+        this.inkColor = inkColor;
+        this.material = material;
+        this.stock = stock;
+        this.stockUpdateDate = stockUpdateDate;
+        this.stockListingDate = stockListingDate;
+        this.price = price;
+        this.discount = discount;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getBrand() {
+        return brand;
+    }
+
+    public String getColor() {
+        return color;
+    }
+
+    public String getInkColor() {
+        return inkColor;
+    }
+
+    public String getMaterial() {
+        return material;
+    }
+
+    public int getStock() {
+        return stock;
+    }
+
+    public void setStock(int stock) {
+        this.stock = stock;
+    }
+
+    public Date getStockUpdateDate() {
+        return stockUpdateDate;
+    }
+
+    public void setStockUpdateDate(Date stockUpdateDate) {
+        this.stockUpdateDate = stockUpdateDate;
+    }
+
+    public Date getStockListingDate() {
+        return stockListingDate;
+    }
+
+    public double getPrice() {
+        return price;
+    }
+
+    public int getDiscount() {
+        return discount;
+    }
+
+    public void setDiscount(int discount) {
+        this.discount = discount;
+    }
+
+    @Override
+    public String toString() {
+        return "Pen{" +
+                "id=" + id +
+                ", brand='" + brand + '\'' +
+                ", color='" + color + '\'' +
+                ", inkColor='" + inkColor + '\'' +
+                ", material='" + material + '\'' +
+                ", stock=" + stock +
+                ", stockUpdateDate=" + stockUpdateDate +
+                ", stockListingDate=" + stockListingDate +
+                ", price=" + price +
+                ", discount=" + discount +
+                '}';
+    }
+}

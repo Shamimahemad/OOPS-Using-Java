@@ -1,0 +1,199 @@
+2. Write a java program to store information of your friends
+id,name,lastname,hobbies,mobno,email,bdate,address
+note: hobbies- a friend may have multiple hobbies
+Accept all friends details and store it in an array
+And do the following.
+1. Display All Friend
+2. Search by id
+3. Search by name
+4. Display all friend with a particular hobby 
+5. Exit
+
+
+
+import java.util.ArrayList;
+import java.util.Scanner;
+
+class Friend {
+    private int id;
+    private String name;
+    private String lastName;
+    private ArrayList<String> hobbies;
+    private String mobNo;
+    private String email;
+    private String bdate;
+    private String address;
+
+    public Friend(int id, String name, String lastName, ArrayList<String> hobbies, String mobNo, String email, String bdate, String address) {
+        this.id = id;
+        this.name = name;
+        this.lastName = lastName;
+        this.hobbies = hobbies;
+        this.mobNo = mobNo;
+        this.email = email;
+        this.bdate = bdate;
+        this.address = address;
+    }
+
+    public int getId() {
+        return id;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public ArrayList<String> getHobbies() {
+        return hobbies;
+    }
+
+    public String getMobNo() {
+        return mobNo;
+    }
+
+    public String getEmail() {
+        return email;
+    }
+
+    public String getBdate() {
+        return bdate;
+    }
+
+    public String getAddress() {
+        return address;
+    }
+}
+
+public class Main {
+    private static Scanner scanner = new Scanner(System.in);
+    private static ArrayList<Friend> friends = new ArrayList<>();
+
+    public static void main(String[] args) {
+        int choice;
+        do {
+            System.out.println("Menu:");
+            System.out.println("1. Display All Friends");
+            System.out.println("2. Search by ID");
+            System.out.println("3. Search by Name");
+            System.out.println("4. Display All Friends with a Particular Hobby");
+            System.out.println("5. Exit");
+            System.out.print("Enter your choice: ");
+            choice = scanner.nextInt();
+            scanner.nextLine(); // Consume newline left over from nextInt()
+
+            switch (choice) {
+                case 1:
+                    displayAllFriends();
+                    break;
+                case 2:
+                    searchById();
+                    break;
+                case 3:
+                    searchByName();
+                    break;
+                case 4:
+                    displayFriendsByHobby();
+                    break;
+                case 5:
+                    System.out.println("Exiting program...");
+                    break;
+                default:
+                    System.out.println("Invalid choice. Please try again.");
+            }
+            System.out.println();
+        } while (choice != 5);
+    }
+
+    private static void displayAllFriends() {
+        if (friends.isEmpty()) {
+            System.out.println("No friends found.");
+            return;
+        }
+        System.out.println("All Friends:");
+        System.out.println("_____________");
+        for (Friend friend : friends) {
+            displayFriend(friend);
+        }
+    }
+
+    private static void searchById() {
+        System.out.print("Enter friend ID: ");
+        int id = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left over from nextInt()
+        Friend friend = findFriendById(id);
+        if (friend == null) {
+            System.out.println("Friend not found.");
+        } else {
+            displayFriend(friend);
+        }
+    }
+
+    private static void searchByName() {
+        System.out.print("Enter friend name: ");
+        String name = scanner.nextLine();
+        Friend friend = findFriendByName(name);
+        if (friend == null) {
+            System.out.println("Friend not found.");
+        } else {
+            displayFriend(friend);
+        }
+    }
+
+    private static void displayFriendsByHobby() {
+        System.out.print("Enter hobby: ");
+        String hobby = scanner.nextLine();
+        ArrayList<Friend> friendsWithHobby = findFriendsByHobby(hobby);
+        if (friendsWithHobby.isEmpty()) {
+            System.out.println("No friends found with that hobby.");
+        } else {
+            System.out.printf("Friends with hobby %s:%n", hobby);
+            System.out.println("_________________________");
+            for (Friend friend : friendsWithHobby) {
+                displayFriend(friend);
+            }
+        }
+    }
+
+    private static void displayFriend(Friend friend) {
+        System.out.printf("Friend ID: %d%n", friend.getId());
+        System.out.printf("Name: %s %s%n", friend.getName(), friend.getLastName());
+        System.out.printf("Hobbies: %s%n", friend.getHobbies());
+        System.out.printf("Mobile Number: %s%n", friend.getMobNo());
+        System.out.printf("Email: %s%n", friend.getEmail());
+        System.out.printf("Birthdate: %s%n", friend.getBdate());
+        System.out.printf("Address: %s%n", friend.getAddress());
+        System.out.println();
+    }
+
+    private static Friend findFriendById(int id) {
+        for (Friend friend : friends) {
+            if (friend.getId() == id) {
+                return friend;
+            }
+        }
+        return null;
+    }
+
+    private static Friend findFriendByName(String name) {
+        for (Friend friend : friends) {
+            if (friend.getName().equals(name)) {
+                return friend;
+            }
+        }
+        return null;
+    }
+
+    private static ArrayList<Friend> findFriendsByHobby(String hobby) {
+        ArrayList<Friend> friendsWithHobby = new ArrayList<>();
+        for (Friend friend : friends) {
+            if (friend.getHobbies().contains(hobby)) {
+                friendsWithHobby.add(friend);
+            }
+        }
+        return friendsWithHobby;
+    }
+}

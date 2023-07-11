@@ -1,0 +1,176 @@
+Write a program to create class Exam, for each exam store examid, name ,topic, date 
+of exam and array of questions.
+For each question store qno, question, opt1,opt2,opt3,opt4,ans,marks
+Create 2 exam objects One for java test and one for Html test by storing 5 questions 
+in each exam
+Ask user which exam user want to appear
+1. Java
+2. HTML
+Conduct the test, and display the marks, if marks are >=3 the display 
+congratulations you completed the test.
+Otherwise display message, better luck next time.
+Then ask user do you want to continue. Do accordingly
+
+
+
+
+import java.util.Scanner;
+
+class Question {
+    private int qno;
+    private String question;
+    private String opt1;
+    private String opt2;
+    private String opt3;
+    private String opt4;
+    private String ans;
+    private int marks;
+
+    public Question(int qno, String question, String opt1, String opt2, String opt3, String opt4, String ans, int marks) {
+        this.qno = qno;
+        this.question = question;
+        this.opt1 = opt1;
+        this.opt2 = opt2;
+        this.opt3 = opt3;
+        this.opt4 = opt4;
+        this.ans = ans;
+        this.marks = marks;
+    }
+
+    public int getQno() {
+        return qno;
+    }
+
+    public String getQuestion() {
+        return question;
+    }
+
+    public String getOpt1() {
+        return opt1;
+    }
+
+    public String getOpt2() {
+        return opt2;
+    }
+
+    public String getOpt3() {
+        return opt3;
+    }
+
+    public String getOpt4() {
+        return opt4;
+    }
+
+    public String getAns() {
+        return ans;
+    }
+
+    public int getMarks() {
+        return marks;
+    }
+}
+
+class Exam {
+    private int examid;
+    private String name;
+    private String topic;
+    private String date;
+    private Question[] questions;
+
+    public Exam(int examid, String name, String topic, String date, Question[] questions) {
+        this.examid = examid;
+        this.name = name;
+        this.topic = topic;
+        this.date = date;
+        this.questions = questions;
+    }
+
+    public int getExamid() {
+        return examid;
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getTopic() {
+        return topic;
+    }
+
+    public String getDate() {
+        return date;
+    }
+
+    public Question[] getQuestions() {
+        return questions;
+    }
+}
+
+public class Main {
+    public static void main(String[] args) {
+        Question[] javaQuestions = new Question[5];
+        javaQuestions[0] = new Question(1, "What is the output of the following code?", "A", "B", "C", "D", "A", 1);
+        javaQuestions[1] = new Question(2, "What is the correct syntax for a for loop in Java?", "for (int i = 0; i < 10; i++)", "for (i = 0; i < 10; i++)", "for (i = 0; i < 10)", "for (int i = 0; i < 10)", "A", 1);
+        javaQuestions[2] = new Question(3, "What is the correct syntax for a while loop in Java?", "while (i < 10)", "while (i < 10; i++)", "while (i++)", "while (i < 10 && i++)", "A", 1);
+        javaQuestions[3] = new Question(4, "What is the correct syntax for a switch statement in Java?", "switch (x) { case 1: break; }", "switch (x) { 1: break; }", "switch (1) { case x: break; }", "switch (1) { case 1: break; }", "D", 1);
+        javaQuestions[4] = new Question(5, "What is the correct syntax for a try-catch block in Java?", "try { } catch { }", "try { } finally { }", "try { } catch (Exception e) { }", "try { } catch (IOException e) { }", "C", 1);
+
+        Question[] htmlQuestions = new Question[5];
+        htmlQuestions[0] = new Question(1, "What does HTML stand for?", "Hyper Text Markup Language", "High Tech Markup Language", "Hyperlinks and Text Markup Language", "Home Tool Markup Language", "A", 1);
+        htmlQuestions[1] = new Question(2, "What is the correct HTML tag for the largest heading?", "<h1>", "<heading>", "<head>", "<h6>", "A", 1);
+        htmlQuestions[2] = new Question(3, "What is the correct HTML tag for inserting a line break?", "<br>", "<break>", "<lb>", "<linebreak>", "A", 1);
+        htmlQuestions[3] = new Question(4, "What is the correct HTML tag for creating a hyperlink?", "<a href=\"url\">link text</a>", "<link href=\"url\">link text</link>", "<a url=\"url\">link text</a>", "<hyperlink href=\"url\">link text</hyperlink>", "A", 1);
+        htmlQuestions[4] = new Question(5, "What is the correct HTML tag for inserting an image?", "<img src=\"image.jpg\">", "<image src=\"image.jpg\">", "<img href=\"image.jpg\">", "<image href=\"image.jpg\">", "A", 1);
+
+        Exam javaExam = new Exam(1, "Java Test", "Java Programming", "2023-07-12", javaQuestions);
+        Exam htmlExam = new Exam(2, "HTML Test", "HTML Basics", "2023-07-13", htmlQuestions);
+
+        Scanner scanner = new Scanner(System.in);
+
+        while (true) {
+            System.out.println("Which exam do you want to appear?");
+            System.out.println("1. Java");
+            System.out.println("2. HTML");
+            int choice = scanner.nextInt();
+
+            Exam exam = null;
+            if (choice == 1) {
+                exam = javaExam;
+            } else if (choice == 2) {
+                exam = htmlExam;
+            } else {
+                System.out.println("Invalid choice.");
+                continue;
+            }
+
+            int totalMarks = 0;
+            for (Question question : exam.getQuestions()) {
+                System.out.println(question.getQuestion());
+                System.out.println("A. " + question.getOpt1());
+                System.out.println("B. " + question.getOpt2());
+                System.out.println("C. " + question.getOpt3());
+                System.out.println("D. " + question.getOpt4());
+                System.out.print("Your answer: ");
+                String answer = scanner.next();
+                if (answer.equalsIgnoreCase(question.getAns())) {
+                    totalMarks += question.getMarks();
+                }
+            }
+
+            System.out.println("Your marks: " + totalMarks);
+            if (totalMarks >= 3) {
+                System.out.println("Congratulations, you completed the test!");
+            } else {
+                System.out.println("Better luck next time.");
+            }
+
+            System.out.println("Do you want to continue? (y/n)");
+            String continueChoice = scanner.next();
+            if (!continueChoice.equalsIgnoreCase("y")) {
+                break;
+            }
+        }
+
+        scanner.close();
+    }
+}

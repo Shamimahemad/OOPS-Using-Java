@@ -1,0 +1,64 @@
+Write a program to maintain student information. For each student store studid, name, m1, 
+m2 and m3 (marks of 3 subjects ). Accept information for 2 students and display it as 
+follows.
+Student Details:
+____________
+Student Id
+ Name: Divya
+M1 : 78
+M2: 86
+M3: 89
+
+
+
+
+import java.util.Scanner;
+
+public class Main {
+    public static void main(String[] args) {
+        Scanner scanner = new Scanner(System.in);
+
+        // Accept information for student 1
+        System.out.println("Enter details for student 1:");
+        System.out.print("Student Id: ");
+        int studid1 = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left over from nextInt()
+        System.out.print("Name: ");
+        String name1 = scanner.nextLine();
+        System.out.print("M1: ");
+        int m1_1 = scanner.nextInt();
+        System.out.print("M2: ");
+        int m2_1 = scanner.nextInt();
+        System.out.print("M3: ");
+        int m3_1 = scanner.nextInt();
+
+        // Accept information for student 2
+        System.out.println("Enter details for student 2:");
+        System.out.print("Student Id: ");
+        int studid2 = scanner.nextInt();
+        scanner.nextLine(); // Consume newline left over from nextInt()
+        System.out.print("Name: ");
+        String name2 = scanner.nextLine();
+        System.out.print("M1: ");
+        int m1_2 = scanner.nextInt();
+        System.out.print("M2: ");
+        int m2_2 = scanner.nextInt();
+        System.out.print("M3: ");
+        int m3_2 = scanner.nextInt();
+
+        // Display student information
+        System.out.println("Student Details:");
+        System.out.println("____________");
+        System.out.printf("Student Id: %d%n", studid1);
+        System.out.printf("Name: %s%n", name1);
+        System.out.printf("M1: %d%n", m1_1);
+        System.out.printf("M2: %d%n", m2_1);
+        System.out.printf("M3: %d%n", m3_1);
+        System.out.println();
+        System.out.printf("Student Id: %d%n", studid2);
+        System.out.printf("Name: %s%n", name2);
+        System.out.printf("M1: %d%n", m1_2);
+        System.out.printf("M2: %d%n", m2_2);
+        System.out.printf("M3: %d%n", m3_2);
+    }
+}
